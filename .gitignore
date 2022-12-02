@@ -2,6 +2,7 @@
 .vs/
 .vscode/
 
+
 # Compiled Object files
 *.slo
 *.lo
@@ -73,3 +74,6 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# exclude asset pack
+Content/MedievalDungeon
