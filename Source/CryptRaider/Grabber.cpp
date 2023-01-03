@@ -42,5 +42,22 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	UWorld* World = GetWorld();
 	float TimeSeconds = World->GetTimeSeconds();
 	UE_LOG(LogTemp, Display, TEXT("Time Seconds: %f"), TimeSeconds);
+
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
+
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(
+		HitResult, 
+		Start, 
+		End, 
+		FQuat::Identity, 
+		ECC_GameTraceChannel2,
+		Sphere
+	);
+	if (HasHit)
+	{
+		FString name = HitResult.GetActor()->GetActorNameOrLabel();
+		UE_LOG(LogTemp, Display, TEXT("Hit : %s"), *name);
+	}
 }
 
