@@ -30,9 +30,12 @@ void UGrabber::BeginPlay()
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+}
 
+void UGrabber::Grab()
+{
 	FVector Start = GetComponentLocation();
-	FVector End = Start + GetForwardVector() * MaxGrabDistance;//FVector(Start.X, Start.Y, Start.Z * MaxGrabDistance);
+	FVector End = Start + GetForwardVector() * MaxGrabDistance;
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red); 
 
 	FRotator MyRotation = GetComponentRotation();
@@ -59,5 +62,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		FString name = HitResult.GetActor()->GetActorNameOrLabel();
 		UE_LOG(LogTemp, Display, TEXT("Hit : %s"), *name);
 	}
+}
+
+void UGrabber::Release()
+{
+	UE_LOG(LogTemp, Display, TEXT("Released grabber"));
 }
 
