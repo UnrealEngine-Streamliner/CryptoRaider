@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -66,6 +67,9 @@ void UGrabber::Grab()
 	{
 		FString name = HitResult.GetActor()->GetActorNameOrLabel();
 		UE_LOG(LogTemp, Display, TEXT("Hit : %s"), *name);
+
+		DrawDebugSphere(GetWorld(), HitResult.Location, 10, 10, FColor::Orange, false, 5);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10, 10, FColor::Blue, false, 5);
 	}
 }
 
