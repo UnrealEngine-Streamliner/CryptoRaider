@@ -4,7 +4,6 @@
 #include "Grabber.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
-#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
@@ -31,7 +30,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UPhysicsHandleComponent* PhysicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	UPhysicsHandleComponent* PhysicsHandler = GetPhysicsHandle();
 	if (PhysicsHandler == nullptr)
 	{
 		return;
@@ -44,7 +43,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 void UGrabber::Grab()
 {
 
-	UPhysicsHandleComponent* PhysicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	UPhysicsHandleComponent* PhysicsHandler = GetPhysicsHandle();
 	if (PhysicsHandler == nullptr)
 	{
 		return;
@@ -87,5 +86,15 @@ void UGrabber::Grab()
 void UGrabber::Release()
 {
 	UE_LOG(LogTemp, Display, TEXT("Released grabber"));
+}
+
+UPhysicsHandleComponent* UGrabber::GetPhysicsHandle()
+{
+	UPhysicsHandleComponent* Result = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (Result == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Grabber requires a UPhysicsHandleComponent."));
+	}
+	return Result;
 }
 
