@@ -4,7 +4,6 @@
 #include "Grabber.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
-#include "DrawDebugHelpers.h"
 
 // Sets default values for this component's properties
 UGrabber::UGrabber()
@@ -35,9 +34,11 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	{
 		return;
 	}
-
-	FVector TargetLocation = GetComponentLocation() + GetForwardVector() * HoldDistance;
-	PhysicsHandler->SetTargetLocationAndRotation(TargetLocation, GetComponentRotation());
+	if (PhysicsHandler->GetGrabbedComponent() != nullptr)
+	{
+		FVector TargetLocation = GetComponentLocation() + GetForwardVector() * HoldDistance;
+		PhysicsHandler->SetTargetLocationAndRotation(TargetLocation, GetComponentRotation());
+	}
 }
 
 void UGrabber::Grab()
@@ -74,8 +75,10 @@ void UGrabber::Grab()
 	);
 	if (HasHit)
 	{
+		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+		HitComponent->WakeAllRigidBodies();
 		PhysicsHandler->GrabComponentAtLocationWithRotation(
-			HitResult.GetComponent(),
+			HitComponent,
 			NAME_None,
 			HitResult.ImpactPoint,
 			GetComponentRotation()
@@ -85,10 +88,16 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	UPhysicsHandleComponent* PhysicsHandler = GetPhysicsHandle();
+	UPrimitiveComponent* Component = PhysicsHandler->GetGrabbedComponent();
+	if (Component != nullptr)
+	{
+		PhysicsHandler->ReleaseComponent();
+	}
 	UE_LOG(LogTemp, Display, TEXT("Released grabber"));
 }
 
-UPhysicsHandleComponent* UGrabber::GetPhysicsHandle()
+UPhysicsHandleComponent* UGrabber::GetPhysicsHandle() const
 {
 	UPhysicsHandleComponent* Result = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (Result == nullptr)
