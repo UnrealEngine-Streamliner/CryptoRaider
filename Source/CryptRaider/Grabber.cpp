@@ -50,29 +50,8 @@ void UGrabber::Grab()
 		return;
 	}
 
-	FVector Start = GetComponentLocation();
-	FVector End = Start + GetForwardVector() * MaxGrabDistance;
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red); 
-
-	FRotator MyRotation = GetComponentRotation();
-	FString RotationString = MyRotation.ToCompactString();
-	UE_LOG(LogTemp, Display, TEXT("Grabber Rotation: %s"), *RotationString);
-
-	UWorld* World = GetWorld();
-	float TimeSeconds = World->GetTimeSeconds();
-	UE_LOG(LogTemp, Display, TEXT("Time Seconds: %f"), TimeSeconds);
-
-	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
-
 	FHitResult HitResult;
-	bool HasHit = GetWorld()->SweepSingleByChannel(
-		HitResult, 
-		Start, 
-		End, 
-		FQuat::Identity, 
-		ECC_GameTraceChannel2,
-		Sphere
-	);
+	bool HasHit = GetGrabbableInReach(HitResult);
 	if (HasHit)
 	{
 		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
@@ -105,5 +84,30 @@ UPhysicsHandleComponent* UGrabber::GetPhysicsHandle() const
 		UE_LOG(LogTemp, Error, TEXT("Grabber requires a UPhysicsHandleComponent."));
 	}
 	return Result;
+}
+
+bool UGrabber::GetGrabbableInReach(FHitResult& OutHitResult) const 
+{
+	FVector Start = GetComponentLocation();
+	FVector End = Start + GetForwardVector() * MaxGrabDistance;
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red); 
+
+	FRotator MyRotation = GetComponentRotation();
+	FString RotationString = MyRotation.ToCompactString();
+	UE_LOG(LogTemp, Display, TEXT("Grabber Rotation: %s"), *RotationString);
+
+	UWorld* World = GetWorld();
+	float TimeSeconds = World->GetTimeSeconds();
+	UE_LOG(LogTemp, Display, TEXT("Time Seconds: %f"), TimeSeconds);
+
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(GrabRadius);
+	return GetWorld()->SweepSingleByChannel(
+		OutHitResult, 
+		Start, 
+		End, 
+		FQuat::Identity, 
+		ECC_GameTraceChannel2,
+		Sphere
+	);
 }
 
